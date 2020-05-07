@@ -1,13 +1,20 @@
 package com.codecool.gladiator.model.gladiators;
 
+import com.codecool.gladiator.util.RandomUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Random;
 
 public class GladiatorFactory {
 
     private List<String> names;
+    private int archerChance = 1;
+    private int assassinChance = 1;
+    private int brutalChance = 1;
+    private int swordsmanChance = 2;
 
     public GladiatorFactory(String fileOfNames) {
         try {
@@ -25,8 +32,8 @@ public class GladiatorFactory {
      * @return gladiator name
      */
     private String getRandomName() {
-        // Todo
-        return "Brutus";
+        Random random = new Random();
+        return names.get(random.nextInt(names.size()));
     }
 
     /**
@@ -36,7 +43,31 @@ public class GladiatorFactory {
      * @return new Gladiator
      */
     public Gladiator generateRandomGladiator() {
-        // Todo
-        return new Brutal(getRandomName(), 50, 50, 50, 1);
+        int MIN_STAT = 25;
+        int MAX_STAT = 100;
+        int MIN_LEVEL = 1;
+        int MAX_LEVEL = 5;
+
+        RandomUtils random = new RandomUtils();
+
+        int randomHp = random.nextInt(MAX_STAT - MIN_STAT) + MIN_STAT;
+        int randomSp = random.nextInt(MAX_STAT - MIN_STAT) + MIN_STAT;
+        int randomDex = random.nextInt(MAX_STAT - MIN_STAT) + MIN_STAT;
+        int randomLevel = random.nextInt(MAX_LEVEL - MIN_LEVEL) + MIN_LEVEL;
+
+
+        int randomNumber = random.nextInt(archerChance + assassinChance + brutalChance + swordsmanChance) + 1;
+        if (randomNumber <= archerChance) {
+            return new Archer(getRandomName(), randomHp, randomSp, randomDex, randomLevel);
+
+        } else if (randomNumber <= archerChance + assassinChance) {
+            return new Assassin(getRandomName(), randomHp, randomSp, randomDex, randomLevel);
+
+        } else if (randomNumber <= archerChance + assassinChance + brutalChance) {
+            return new Brutal(getRandomName(), randomHp, randomSp, randomDex, randomLevel);
+        } else {
+            return new Swordsman(getRandomName(), randomHp, randomSp, randomDex, randomLevel);
+        }
+
     }
 }

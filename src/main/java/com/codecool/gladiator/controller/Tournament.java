@@ -38,26 +38,53 @@ public class Tournament {
 
     private List<Gladiator> generateGladiators(int numberOfGladiators) {
         List<Gladiator> gladiators = new ArrayList<>();
-        // Todo
+        for (int i = 0; i < numberOfGladiators; i++) {
+            gladiators.add(gladiatorFactory.generateRandomGladiator());
+        }
         introduceGladiators(gladiators);
         return gladiators;
     }
 
     private Gladiator getChampion(BinaryTree<Gladiator> tournamentTree) {
-        // Todo - call simulateCombat as many times as needed
-        return null;
+        int sizeOfBranch = 2;
+        int exponent = 2;
+        while (tournamentTree.getValue() == null) {
+            view.display("\nROUND " + (exponent - 1));
+            getGladiators(tournamentTree, sizeOfBranch);
+            sizeOfBranch = (int) Math.pow(2, exponent);
+            exponent += 1;
+        }
+
+        return tournamentTree.getValue();
+    }
+
+    private void getGladiators(BinaryTree<Gladiator> branch, int sizeOfBranch) {
+        if (branch.getSize() == sizeOfBranch) {
+            Combat combat = new Combat(branch.getLeftBranch().getValue(), branch.getRightBranch().getValue());
+            Gladiator winner = simulateCombat(combat);
+            winner.levelUp();
+            branch.add(winner);
+        } else {
+            getGladiators(branch.getLeftBranch(), sizeOfBranch);
+            getGladiators(branch.getRightBranch(), sizeOfBranch);
+        }
     }
 
     private Gladiator simulateCombat(Combat combat) {
         Gladiator gladiator1 = combat.getGladiator1();
         Gladiator gladiator2 = combat.getGladiator2();
+
         announceCombat(gladiator1, gladiator2);
 
-        // Todo
+        Gladiator winner = combat.simulate();
 
         displayCombatLog(combat);
-        announceWinnerAndLoser(gladiator1, gladiator2);
-        return gladiator1;
+        if (winner == gladiator1) {
+            announceWinnerAndLoser(gladiator1, gladiator2);
+        } else {
+            announceWinnerAndLoser(gladiator2, gladiator1);
+        }
+        return winner;
     }
 
     public void welcome() {
@@ -73,15 +100,17 @@ public class Tournament {
     private void introduceGladiators(List<Gladiator> gladiators) {
         view.display(String.format("\nWe have selected Rome's %d finest warriors for today's Tournament!", gladiators.size()));
         for (Gladiator gladiator: gladiators) {
-            view.display(String.format(" - %s", gladiator));
+            view.display(String.format(" - %s", gladiator.getFullName()));
         }
         view.display("\n\"Ave Imperator, morituri te salutant!\"");
     }
 
     private void announceCombat(Gladiator gladiator1, Gladiator gladiator2) {
         view.display(String.format("\nDuel %s versus %s:", gladiator1.getName(), gladiator2.getName()));
-        view.display(String.format(" - %s", gladiator1));
-        view.display(String.format(" - %s", gladiator2));
+        view.display(String.format(" - %s, HP - %s, SP - %s, Dex - %s, Level - %s",
+                gladiator1.getFullName(), gladiator1.getBaseHp(), gladiator1.getBaseSp(), gladiator1.getBaseDex(), gladiator1.getLevel()));
+        view.display(String.format(" - %s, HP - %s, SP - %s, Dex - %s, Level - %s",
+                gladiator2.getFullName(), gladiator2.getBaseHp(), gladiator2.getBaseSp(), gladiator2.getBaseDex(), gladiator2.getLevel()));
     }
 
     private void displayCombatLog(Combat combat) {

@@ -1,5 +1,8 @@
 package com.codecool.gladiator.util;
 
+import com.codecool.gladiator.model.gladiators.Gladiator;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,7 +29,7 @@ public class BinaryTree<T> {
      * @param value the initial value to be added to the tree
      */
     public BinaryTree(T value) {
-        // Todo
+        this.value = value;
     }
 
     /**
@@ -35,7 +38,8 @@ public class BinaryTree<T> {
      * @param values the list of values to be added to the tree
      */
     public BinaryTree(List<T> values) {
-        // Todo
+        this.size = size(values);
+        addAll(values);
     }
 
     /**
@@ -69,17 +73,20 @@ public class BinaryTree<T> {
      *
      * @return the size of the tree
      */
-    public int size() {
-        return size;
+    public int size(List<T> values) {
+        return values.size();
     }
 
+    public int getSize() {
+        return size;
+    }
     /**
      * Adds a new value to the tree
      *
      * @param value the value to be added to the tree
      */
     public void add(T value) {
-        // Todo
+        this.value = value;
     }
 
     /**
@@ -88,7 +95,22 @@ public class BinaryTree<T> {
      * @param values the list of values to be added to the tree
      */
     public void addAll(List<T> values) {
-        // Todo
+        if (size(values) <= 2) {
+            leftBranch = new BinaryTree<>(values.get(0));
+            rightBranch = new BinaryTree<>(values.get(1));
+        } else {
+            List<T> leftBranchGladiators = new ArrayList<>();
+            List<T> rightBranchGladiators = new ArrayList<>();
+            for (int i = 0; i < size(values); i++) {
+                if (i < size(values) / 2) {
+                    leftBranchGladiators.add(values.get(i));
+                } else {
+                    rightBranchGladiators.add(values.get(i));
+                }
+            }
+            leftBranch = new BinaryTree<>(leftBranchGladiators);
+            rightBranch = new BinaryTree<>(rightBranchGladiators);
+        }
     }
 
 }
